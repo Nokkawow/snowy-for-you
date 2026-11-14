@@ -146,6 +146,7 @@ $('#passwordForm').addEventListener('submit', async (event) => {
     return;
   }
   wrongAttempts += 1;
+  if (value) window.snowyBackend.saveAnswer({ page: 2, key: `memory_try_${wrongAttempts}`, value }).catch(() => {});
   $('#passwordMessage').textContent = wrongAttempts === 1 ? 'เอ๊ะ…เรื่องนั้นจริงเหรอ ลองอีกทีนะ' : 'ยังไม่ใช่อ่า ลองขอคำใบ้ดูไหม';
   setReaction(wrongAttempts > 1 ? 'angry2' : 'angry1', wrongAttempts > 1 ? 'ผมเริ่มกระทืบเท้าแล้วนะ!' : 'ผมเริ่มงอนแล้วนะ');
   $('#hintRunner').hidden = false;

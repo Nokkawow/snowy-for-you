@@ -37,7 +37,9 @@ function render(events) {
       item.className = 'event-item';
       const value = event.answer_text || (event.payload ? JSON.stringify(event.payload, null, 2) : '—');
       item.innerHTML = `<div class="event-meta"><span>หน้า ${event.page_number}</span><time>${formatDate(event.created_at)}</time></div><h3></h3>${event.payload ? '<pre></pre>' : '<p></p>'}`;
-      item.querySelector('h3').textContent = labels[event.answer_key] ?? event.answer_key;
+      item.querySelector('h3').textContent = event.answer_key.startsWith('memory_try_')
+        ? `ลองตอบชื่อหนังครั้งที่ ${event.answer_key.slice(11)}`
+        : labels[event.answer_key] ?? event.answer_key;
       item.querySelector(event.payload ? 'pre' : 'p').textContent = value;
       eventList.append(item);
     }
