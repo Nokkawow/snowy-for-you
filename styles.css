@@ -671,7 +671,23 @@ body.is-viewing .gif-stage { opacity: 0; pointer-events: none; }
 .interstitial-message { margin: 6px 0 16px; color: var(--ink); font-size: clamp(1.15rem, 4.6vw, 1.4rem); font-weight: 900; line-height: 1.5; }
 .interstitial-message::before, .interstitial-message::after { content: "❄"; margin-inline: .35em; color: #5d8fd8; font-size: .8em; }
 .interstitial-next { width: 100%; }
-.understand-row { grid-template-columns: 1fr 1fr; }
+/* "เข้าใจ" โตขึ้นทุกครั้งที่กด "ไม่เข้าใจ" (--understand-grow = 0..5 ตั้งจาก app.js) */
+.understand-row {
+  --understand-grow: 0;
+  grid-template-columns: 1fr 1fr; /* app.js ขยายช่องซ้ายเมื่อกด "ไม่เข้าใจ" */
+  align-items: center;
+}
+.understand-row [data-next] {
+  min-height: calc(46px + var(--understand-grow) * 12px);
+  font-size: calc(1rem + var(--understand-grow) * .18rem);
+  transition: min-height .25s ease, font-size .25s ease;
+}
+.understand-row #notUnderstandButton { padding-inline: 8px; white-space: nowrap; font-size: calc(1rem - var(--understand-grow) * .05rem); }
+
+/* หัวข้อใหญ่อยู่บรรทัดเดียว (ขนาดตัวอักษรถูกย่อให้พอดีโดย fitHeadings() ใน app.js) */
+.start-card h1,
+.question-card > h1,
+.question-card > h2 { white-space: nowrap; text-wrap: nowrap; }
 .interstitial.is-shaking { animation: card-shake .45s ease; }
 @keyframes card-shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(4px); } }
 

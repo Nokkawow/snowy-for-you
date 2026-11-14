@@ -25,12 +25,8 @@
   const canvas = document.getElementById('snowCanvas');
   if (!canvas || !canvas.getContext) return;
   const ctx = canvas.getContext('2d');
-  const realMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  // สำหรับทดสอบ: เปิดด้วย ?motion=on เพื่อบังคับให้หิมะตก แม้เครื่องจะตั้ง "ลดการเคลื่อนไหว" ไว้
-  const forceMotion = new URLSearchParams(window.location.search).get('motion') === 'on';
-  const motionQuery = forceMotion
-    ? { matches: false, addEventListener: null }
-    : realMotionQuery;
+  // หิมะตกตลอด แม้เครื่องจะตั้ง "ลดการเคลื่อนไหว" ไว้ (เจ้าของเว็บต้องการแบบนี้ ไม่มีเกล็ดนิ่งค้าง)
+  const motionQuery = { matches: false, addEventListener: null };
 
   let width = 0;   // หน่วยพิกเซลศิลป์
   let height = 0;

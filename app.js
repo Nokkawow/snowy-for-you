@@ -132,7 +132,28 @@ function renderStep() {
 function goToStep(step) {
   currentStep = Math.min(totalSteps, Math.max(1, step));
   renderStep();
+  fitHeadings();
 }
+
+/*
+ * หัวข้อใหญ่ทุกหน้าให้อยู่บรรทัดเดียว: เริ่มจากขนาดใน CSS แล้วค่อย ๆ ลดจนพอดีความกว้างการ์ด
+ * (ไม่ต่ำกว่า HEADING_MIN_PX เพื่อให้ยังอ่านออก)
+ */
+const HEADING_MIN_PX = 12;
+function fitHeadings() {
+  for (const el of $$('.start-card h1, .question-card > h1, .question-card > h2')) {
+    if (!el.offsetParent) continue; // ข้ามหัวข้อของหน้าที่ซ่อนอยู่
+    el.style.fontSize = '';
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    while (el.scrollWidth > el.clientWidth + 1 && size > HEADING_MIN_PX) {
+      size -= 0.5;
+      el.style.fontSize = `${size}px`;
+    }
+  }
+}
+let fitTimer = 0;
+window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitHeadings, 120); });
+if (document.fonts?.ready) document.fonts.ready.then(fitHeadings);
 
 /*
  * ปุ่ม "วันนี้ยังไม่พร้อม" แบบกวน ๆ
@@ -277,6 +298,11 @@ function showInterstitial(id) {
 let notUnderstandCount = 0;
 $('#notUnderstandButton').addEventListener('click', () => {
   notUnderstandCount += 1;
+  // ปุ่ม "เข้าใจ" ใหญ่ขึ้นทุกครั้ง (สูงสุด 5 ขั้น)
+  const grow = Math.min(notUnderstandCount, 5);
+  const row = $('#workCare .understand-row');
+  row.style.setProperty('--understand-grow', String(grow));
+  row.style.gridTemplateColumns = `${1 + grow * 0.6}fr 1fr`;
   const index = Math.min(notUnderstandCount, 4) - 1;
   setReactionUrl(passwordGifs.wrong[index], fallbackWrongGifs[index], '');
   const card = $('#workCare');
@@ -390,3 +416,4 @@ document.addEventListener('click', (event) => {
 });
 
 renderStep();
+fitHeadings();
