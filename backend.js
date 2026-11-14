@@ -25,11 +25,8 @@
       queue(event);
       return { queued: true };
     }
-    const { error } = await client.from('love_response_events').upsert(event, {
-      onConflict: 'session_id,page_number,answer_key',
-      ignoreDuplicates: true,
-    });
-    if (error) {
+    const { error } = await client.from('love_response_events').insert(event);
+    if (error && error.code !== '23505') {
       queue(event);
       throw error;
     }
@@ -52,11 +49,13 @@
     if (!client) return;
     const pending = readPending();
     if (!pending.length) return;
-    const { error } = await client.from('love_response_events').upsert(pending, {
-      onConflict: 'session_id,page_number,answer_key',
-      ignoreDuplicates: true,
-    });
-    if (!error) localStorage.removeItem(pendingKey);
+    const remaining = [];
+    for (const event of pending) {
+      const { error } = await client.from('love_response_events').insert(event);
+      if (error && error.code !== '23505') remaining.push(event);
+    }
+    if (remaining.length) localStorage.setItem(pendingKey, JSON.stringify(remaining));
+    else localStorage.removeItem(pendingKey);
   }
 
   window.snowyBackend = { client, configured, sessionId, saveAnswer, flush };

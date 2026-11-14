@@ -373,6 +373,7 @@ body[data-step="8"] .penguin--pink { right: 33%; transform: rotate(4deg); }
 .bouquet-options { display: grid; gap: 8px; padding: 12px; margin-bottom: 14px; border-radius: 14px; background: #efe6d7; font-size: .9rem; }
 .privacy-note { margin: 0 0 15px; padding: 11px 12px; border-radius: 13px; background: #eaf3ff; color: #425b85; font-size: .82rem; }
 .music-preview { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; margin: 18px 0; padding: 12px; border-radius: 14px; background: #e7eff9; }
+.music-preview { width: 100%; border: 1px solid #bcc9e0; color: var(--ink); cursor: pointer; text-align: left; }
 .music-preview i { height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--blue) 55%, #b8c2d0 55%); }
 .music-preview button { border: 0; background: transparent; color: var(--ink); }
 

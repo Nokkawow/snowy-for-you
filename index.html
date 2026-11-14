@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#132a55" />
-    <title>เมืองหิมะของเรา — Tier 1 Preview</title>
+    <title>เมืองหิมะของเรา</title>
     <meta
       name="description"
-      content="ต้นแบบโครงสร้างเว็บเช็กอินแสนอบอุ่นในเมืองหิมะ"
+      content="เรื่องเล็ก ๆ ในเมืองหิมะที่ผมอยากให้คุณเปิดอ่าน"
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -17,11 +17,11 @@
         <span class="start-snow" aria-hidden="true">❄</span>
         <p class="eyebrow">เมืองหิมะของเรา</p>
         <h1>แตะเพื่อเริ่ม</h1>
-        <p>เพลงจะเริ่มหลังจากคุณแตะ และปิดเสียงได้ทุกเมื่อ</p>
+        <p>ถ้าเพลงยังไม่เล่น แตะโน้ตมุมขวาบนเพื่อเปิดได้เลยนะ</p>
         <button class="button button--primary" id="startExperienceButton" type="button">เริ่มอ่านกันเลย</button>
       </div>
     </section>
-    <main class="app-shell" aria-label="ต้นแบบเว็บเมืองหิมะ">
+    <main class="app-shell" aria-label="เว็บเมืองหิมะ">
       <div class="snowfield" aria-hidden="true">
         <div class="stars"></div>
         <div class="moon"></div>
@@ -43,7 +43,7 @@
           <div class="step-badge" aria-live="polite">
             <span id="stepNumber">1</span><small>/8</small>
           </div>
-          <p class="preview-label">TIER 1 · PLACEHOLDER</p>
+          <p class="preview-label">เมืองหิมะของเรา</p>
           <button class="icon-button" id="musicButton" type="button" aria-label="เปิดตัวควบคุมเพลง">
             ♫
           </button>
@@ -66,8 +66,8 @@
         <section class="card-stack">
           <article class="question-card is-active" data-panel="1">
             <p class="eyebrow">หน้าเริ่มต้น</p>
-            <h1>ข้อความเปิดเว็บ</h1>
-            <p class="placeholder-copy">ข้อความจริงจะเขียนร่วมกันภายหลัง</p>
+            <h1>คุณ วันนี้เป็นยังไงบ้าง</h1>
+            <p class="placeholder-copy">ผมทำเมืองหิมะเล็ก ๆ ไว้ให้คุณเดินเล่น ถ้ายังไม่พร้อมคุยก็ไม่เป็นไรนะ แค่อยากถามว่าคุณโอเคไหม</p>
             <div class="button-stack choice-zone">
               <button class="button button--primary" type="button" data-next>อ่านต่อ</button>
               <button class="button button--ghost runaway-button" type="button" id="notReadyButton"><span class="button-legs" aria-hidden="true">╱╲</span>วันนี้ยังไม่พร้อม</button>
@@ -106,7 +106,7 @@
           <article class="question-card" data-panel="5" hidden>
             <p class="eyebrow">วันนี้เป็นยังไงบ้าง</p>
             <h2>ทำงานเหนื่อยไหม</h2>
-            <form class="answer-form" data-answer-key="work"><label class="field"><span>เล่าให้ผมฟังได้นะ</span><textarea rows="4" placeholder="ข้อความจริงจะปรับภายหลัง…"></textarea></label><button class="button button--primary" type="submit">ไปต่อ</button></form>
+            <form class="answer-form" data-answer-key="work"><label class="field"><span>เล่าให้ผมฟังได้นะ</span><textarea rows="4" placeholder="วันนี้ที่ทำงานเป็นยังไงบ้าง…"></textarea></label><button class="button button--primary" type="submit">ไปต่อ</button></form>
           </article>
 
           <article class="question-card flower-card" data-panel="6" hidden>
@@ -134,9 +134,9 @@
 
           <article class="question-card end-card" data-panel="8" hidden>
             <p class="eyebrow">หน้าปิดท้าย</p>
-            <h2>ข้อความอบอุ่นจากผม</h2>
-            <p class="placeholder-copy">รอเขียนข้อความจริงร่วมกัน</p>
-            <div class="music-preview"><span>♫</span><i></i><button type="button" disabled>◼</button></div>
+            <h2>ขอบคุณที่มาเดินเล่นด้วยกันนะ</h2>
+            <p class="placeholder-copy">ไม่ต้องรีบตอบอะไร ผมแค่อยากฟังคุณ ถ้าอยากคุยกัน ผมอยู่ตรงนี้นะ</p>
+            <button class="music-preview" id="endMusicButton" type="button" aria-label="เปิดเครื่องเล่นเพลง"><span>♫</span><span>เปิดเพลง Snowy</span><span>▶</span></button>
             <button class="button button--primary" id="returnInstagramButton" type="button">กลับไปคุยกันใน Instagram</button>
           </article>
         </section>
@@ -146,7 +146,7 @@
         </nav>
       </section>
     </main>
-    <section class="exit-overlay" id="exitOverlay" hidden><div class="exit-card"><div class="exit-penguin" aria-hidden="true">🐧</div><h2>ไม่เป็นไรนะ</h2><p>ตรงนี้ยังเป็นข้อความตัวอย่าง ไว้พร้อมเมื่อไหร่ค่อยกลับมาอ่านก็ได้</p><button class="button button--ghost" id="returnButton" type="button">กลับมาหน้าแรก</button></div></section>
+    <section class="exit-overlay" id="exitOverlay" hidden><div class="exit-card"><div class="exit-penguin" aria-hidden="true">🐧</div><h2>ไม่เป็นไรนะ</h2><p>ไว้พร้อมเมื่อไหร่ค่อยกลับมาอ่านก็ได้ ผมไม่รีบ</p><button class="button button--ghost" id="returnButton" type="button">กลับมาหน้าแรก</button></div></section>
     <aside class="music-drawer" id="musicDrawer" hidden>
       <div><strong>Snowy — Toby Fox</strong><small>เล่นผ่าน YouTube</small></div>
       <div id="youtubePlayer"></div>

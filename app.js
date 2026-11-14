@@ -62,6 +62,7 @@ $('#startExperienceButton').addEventListener('click', () => {
 });
 
 $('#musicButton').addEventListener('click', () => { $('#musicDrawer').hidden = !$('#musicDrawer').hidden; });
+$('#endMusicButton').addEventListener('click', () => { $('#musicDrawer').hidden = false; });
 $('#closeMusicDrawer').addEventListener('click', () => { $('#musicDrawer').hidden = true; });
 $('#returnInstagramButton').addEventListener('click', () => history.length > 1 ? history.back() : window.close());
 
