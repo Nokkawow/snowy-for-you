@@ -13,6 +13,28 @@ const reactionGifs = {
   happy: "https://media.giphy.com/media/2uaneUSer0ikUtRhgJ/giphy.gif",
 };
 
+/*
+ * GIF เฉพาะหน้ารหัสความทรงจำ + หน้าแตะเพื่อเริ่ม (ใส่ "ลิงก์ตรงของไฟล์ GIF")
+ * ถ้าช่องไหนว่าง ระบบจะใช้ GIF เดิมแทน
+ */
+const passwordGifs = {
+  // ตอบผิดครั้งที่ 1, 2, 3, 4 (ครั้งที่ 5 ขึ้นไปใช้อันที่ 4)
+  wrong: ['gifs/wrong-1.webp', 'gifs/wrong-2.webp', 'gifs/wrong-3.webp', 'gifs/wrong-4.webp'],
+  correct: 'gifs/correct.webp', // ตอนขึ้นคำชม "เก่งมากค้าบคุณณณณ"
+  opening: 'gifs/opening.gif',  // บนการ์ด "แตะเพื่อเริ่ม" แทน ❄
+};
+const fallbackWrongGifs = ['angry1', 'angry1', 'angry2', 'angry2'];
+// โหลดรูปตอบผิด/ตอบถูกล่วงหน้า จะได้ขึ้นทันทีไม่กระพริบ
+[...passwordGifs.wrong, passwordGifs.correct].filter(Boolean).forEach((src) => { new Image().src = src; });
+
+function setReactionUrl(url, fallbackKey, caption) {
+  if (url) {
+    reactionGif.src = url;
+    reactionGif.alt = `GIF: ${caption}`;
+    reactionCaption.textContent = caption;
+  } else setReaction(fallbackKey, caption);
+}
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 const panels = $$('[data-panel]');
@@ -29,7 +51,7 @@ for (let index = 1; index <= totalSteps; index += 1) {
 }
 
 function setReaction(key, caption) {
-  reactionGif.src = reactionGifs[key];
+  reactionGif.src = reactionGifs[key] || key; // ใส่ชื่อจาก reactionGifs หรือ path ของไฟล์ก็ได้
   reactionGif.alt = `เพนกวินแสดงอารมณ์: ${caption}`;
   reactionCaption.textContent = caption;
 }
@@ -53,6 +75,13 @@ function createMusicPlayer() {
 }
 
 window.onYouTubeIframeAPIReady = () => { if (shouldStartMusic) createMusicPlayer(); };
+
+// GIF บนการ์ด "แตะเพื่อเริ่ม" (ถ้าใส่ลิงก์ไว้ใน passwordGifs.opening)
+if (passwordGifs.opening) {
+  $('#openingGif').src = passwordGifs.opening;
+  $('#openingGif').hidden = false;
+  $('#startSnow').hidden = true;
+}
 
 $('#startExperienceButton').addEventListener('click', () => {
   shouldStartMusic = true;
@@ -79,7 +108,7 @@ $('#returnInstagramButton').addEventListener('click', () => history.length > 1 ?
 
 function reactionForStep(step) {
   if (step === 1) return ['nervous', 'ผมกำลังลุ้นอยู่นะ'];
-  if (step === 2) return wrongAttempts ? [wrongAttempts > 1 ? 'angry2' : 'angry1', 'ยังจำได้ไหมมม'] : ['nervous', 'ลองนึกดูดี ๆ นะ'];
+  if (step === 2) return wrongAttempts ? [passwordGifs.wrong[Math.min(wrongAttempts, 4) - 1] || 'angry1', 'ยังจำได้ไหมมม'] : ['nervous', 'ลองนึกดูดี ๆ นะ'];
   if (step === 3) return ['shocked', 'หื้ยยยยย ใช่ป่าววว'];
   if (step === 8) return ['happy', 'ขอบคุณที่อ่านจนจบนะ'];
   return ['happy', 'ผมอ่านอยู่นะ'];
@@ -220,7 +249,8 @@ $('#passwordForm').addEventListener('submit', async (event) => {
   wrongAttempts += 1;
   if (value) window.snowyBackend.saveAnswer({ page: 2, key: `memory_try_${wrongAttempts}`, value }).catch(() => {});
   $('#passwordMessage').textContent = wrongAttempts === 1 ? 'เอ๊ะ…เรื่องนั้นจริงเหรอ ลองอีกทีนะ' : 'ยังไม่ใช่อ่า ลองขอคำใบ้ดูไหม';
-  setReaction(wrongAttempts > 1 ? 'angry2' : 'angry1', wrongAttempts > 1 ? 'ผมเริ่มกระทืบเท้าแล้วนะ!' : 'ผมเริ่มงอนแล้วนะ');
+  const wrongIndex = Math.min(wrongAttempts, 4) - 1;
+  setReactionUrl(passwordGifs.wrong[wrongIndex], fallbackWrongGifs[wrongIndex], wrongAttempts > 1 ? 'ผมเริ่มกระทืบเท้าแล้วนะ!' : 'ผมเริ่มงอนแล้วนะ');
   $('#hintRunner').hidden = false;
 });
 
@@ -238,7 +268,7 @@ $('#hintButton').addEventListener('click', () => {
 $('#confirmAnswerButton').addEventListener('click', (event) => {
   $('#confirmationPraise').hidden = false;
   event.currentTarget.disabled = true;
-  setReaction('happy', 'เก่งมากค้าบคุณณณณ');
+  setReactionUrl(passwordGifs.correct, 'happy', 'เก่งมากค้าบคุณณณณ');
   window.setTimeout(() => goToStep(4), 1600);
 });
 
