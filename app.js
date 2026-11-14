@@ -20,12 +20,22 @@ const reactionGifs = {
 const passwordGifs = {
   // ตอบผิดครั้งที่ 1, 2, 3, 4 (ครั้งที่ 5 ขึ้นไปใช้อันที่ 4)
   wrong: ['gifs/wrong-1.webp', 'gifs/wrong-2.webp', 'gifs/wrong-3.webp', 'gifs/wrong-4.webp'],
-  correct: 'gifs/correct.webp', // ตอนขึ้นคำชม "เก่งมากค้าบคุณณณณ"
+  correct: 'https://media.giphy.com/media/111ebonMs90YLu/giphy.gif', // เด็กชูนิ้ว ตอนตอบถูก
   opening: 'gifs/opening.gif',  // บนการ์ด "แตะเพื่อเริ่ม" แทน ❄
 };
+
+// GIF ประจำแต่ละหน้า (ถ้าช่องไหนว่าง จะใช้เพนกวินเดิม)
+const pageGifs = {
+  memoryWaiting: 'gifs/thinking.gif',  // หน้า 2 ตอนรอพิมพ์รหัส
+  feeling: 'gifs/feeling-cat.gif',     // หน้า 3 ดีขึ้นไหม
+  work: 'gifs/work-cat.gif',           // หน้า 4 งานเป็นไงบ้าง
+  flowersSent: 'gifs/smile-dog.gif',   // หน้า 5 หลังกดส่งช่อดอกไม้
+  listen: 'gifs/listen.gif',           // หน้า 6 ตอนเปิดหน้า
+  listenTyping: '',                    // หน้า 6 พอเริ่มพิมพ์ (ใส่ไฟล์ภาพที่ 7 ตรงนี้)
+};
 const fallbackWrongGifs = ['angry1', 'angry1', 'angry2', 'angry2'];
-// โหลดรูปตอบผิด/ตอบถูกล่วงหน้า จะได้ขึ้นทันทีไม่กระพริบ
-[...passwordGifs.wrong, passwordGifs.correct].filter(Boolean).forEach((src) => { new Image().src = src; });
+// โหลดรูปล่วงหน้า จะได้ขึ้นทันทีไม่กระพริบ
+[...passwordGifs.wrong, passwordGifs.correct, ...Object.values(pageGifs)].filter(Boolean).forEach((src) => { new Image().src = src; });
 
 function setReactionUrl(url, fallbackKey, caption) {
   if (url) {
@@ -108,8 +118,11 @@ $('#returnInstagramButton').addEventListener('click', () => history.length > 1 ?
 
 function reactionForStep(step) {
   if (step === 1) return ['nervous', 'ผมกำลังลุ้นอยู่นะ'];
-  if (step === 2) return wrongAttempts ? [passwordGifs.wrong[Math.min(wrongAttempts, 4) - 1] || 'angry1', 'ยังจำได้ไหมมม'] : ['nervous', 'ลองนึกดูดี ๆ นะ'];
+  if (step === 2) return wrongAttempts ? [passwordGifs.wrong[Math.min(wrongAttempts, 4) - 1] || 'angry1', 'ยังจำได้ไหมมม'] : [pageGifs.memoryWaiting || 'nervous', 'ลองนึกดูดี ๆ นะ'];
+  if (step === 3) return [pageGifs.feeling || 'happy', 'ผมอ่านอยู่นะ'];
+  if (step === 4) return [pageGifs.work || 'happy', 'ผมอ่านอยู่นะ'];
   if (step === 5) return ['gifs/flowers.gif', 'ผมอ่านอยู่นะ'];
+  if (step === 6) return [pageGifs.listen || 'happy', 'ผมฟังอยู่นะ'];
   if (step === 7) return ['happy', 'ขอบคุณที่อ่านจนจบนะ'];
   return ['happy', 'ผมอ่านอยู่นะ'];
 }
@@ -416,8 +429,18 @@ $('#createBouquetButton').addEventListener('click', async () => {
     $('#myBouquet').innerHTML = window.SnowyPixel.roseBouquet('ชมพู');
     $('#bouquetBuilder').hidden = true;
     $('#bouquetReveal').hidden = false;
+    setReactionUrl(pageGifs.flowersSent, 'happy', 'สวยมากเลยยย');
     $('#bouquetReveal').scrollIntoView({ behavior: 'smooth', block: 'center' });
   }, 900);
+});
+
+// หน้า 6: พอเริ่มพิมพ์ เปลี่ยนเป็น GIF ภาพที่ 7 (ถ้าใส่ไฟล์ไว้ใน pageGifs.listenTyping)
+$('[data-panel="6"] textarea').addEventListener('input', (event) => {
+  if (!pageGifs.listenTyping) return;
+  const typing = String(event.target.value.trim().length > 0);
+  if (typing === event.target.dataset.typing) return;
+  event.target.dataset.typing = typing;
+  setReactionUrl(typing === 'true' ? pageGifs.listenTyping : pageGifs.listen, 'happy', 'ผมฟังอยู่นะ');
 });
 
 document.addEventListener('click', (event) => {
