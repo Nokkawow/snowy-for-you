@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#132a55" />
+    <title>เมืองหิมะของเรา — Tier 1 Preview</title>
+    <meta
+      name="description"
+      content="ต้นแบบโครงสร้างเว็บเช็กอินแสนอบอุ่นในเมืองหิมะ"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body data-step="1">
+    <section class="start-overlay" id="startOverlay">
+      <div class="start-card">
+        <span class="start-snow" aria-hidden="true">❄</span>
+        <p class="eyebrow">เมืองหิมะของเรา</p>
+        <h1>แตะเพื่อเริ่ม</h1>
+        <p>เพลงจะเริ่มหลังจากคุณแตะ และปิดเสียงได้ทุกเมื่อ</p>
+        <button class="button button--primary" id="startExperienceButton" type="button">เริ่มอ่านกันเลย</button>
+      </div>
+    </section>
+    <main class="app-shell" aria-label="ต้นแบบเว็บเมืองหิมะ">
+      <div class="snowfield" aria-hidden="true">
+        <div class="stars"></div>
+        <div class="moon"></div>
+        <div class="mountain mountain--left"></div>
+        <div class="mountain mountain--right"></div>
+        <div class="cottage cottage--left"><i></i><i></i></div>
+        <div class="cottage cottage--right"><i></i><i></i></div>
+        <div class="pine pine--one"></div>
+        <div class="pine pine--two"></div>
+        <div class="pine pine--three"></div>
+        <div class="lamp"><span></span></div>
+        <div class="snowbank snowbank--back"></div>
+        <div class="snowbank snowbank--front"></div>
+        <div class="snowflakes"></div>
+      </div>
+
+      <section class="phone-stage">
+        <header class="topbar">
+          <div class="step-badge" aria-live="polite">
+            <span id="stepNumber">1</span><small>/8</small>
+          </div>
+          <p class="preview-label">TIER 1 · PLACEHOLDER</p>
+          <button class="icon-button" id="musicButton" type="button" aria-label="เปิดตัวควบคุมเพลง">
+            ♫
+          </button>
+        </header>
+
+        <section class="visual-stage" aria-label="พื้นที่ภาพและ GIF">
+          <div class="gif-stage" aria-label="GIF เพนกวินแสดงอารมณ์">
+            <img id="reactionGif" src="https://media.giphy.com/media/Wpnp8ESQcjfPXeCO2r/giphy.gif" alt="เพนกวินกำลังลุ้น" />
+            <p id="reactionCaption">ผมกำลังลุ้นอยู่นะ</p>
+          </div>
+
+          <div class="story-characters" aria-hidden="true">
+            <div class="penguin penguin--blue"><span></span></div>
+            <div class="penguin penguin--pink"><span></span></div>
+            <div class="footprints footprints--blue">•••</div>
+            <div class="footprints footprints--pink">•••</div>
+          </div>
+        </section>
+
+        <section class="card-stack">
+          <article class="question-card is-active" data-panel="1">
+            <p class="eyebrow">หน้าเริ่มต้น</p>
+            <h1>ข้อความเปิดเว็บ</h1>
+            <p class="placeholder-copy">ข้อความจริงจะเขียนร่วมกันภายหลัง</p>
+            <div class="button-stack choice-zone">
+              <button class="button button--primary" type="button" data-next>อ่านต่อ</button>
+              <button class="button button--ghost runaway-button" type="button" id="notReadyButton"><span class="button-legs" aria-hidden="true">╱╲</span>วันนี้ยังไม่พร้อม</button>
+            </div>
+          </article>
+
+          <article class="question-card" data-panel="2" hidden>
+            <p class="eyebrow">รหัสความทรงจำ</p>
+            <h2>หนังเรื่องแรกที่เราดูด้วยกัน</h2>
+            <form id="passwordForm" novalidate>
+              <label class="field"><span>คำตอบ</span><input id="memoryAnswer" type="text" placeholder="พิมพ์ชื่อหนัง…" autocomplete="off" /></label>
+              <p class="field-message" id="passwordMessage" aria-live="polite"></p>
+              <div class="hint-runner" id="hintRunner" hidden><span class="hint-penguin" aria-hidden="true">🐧</span><span id="hintText">คำใบ้จะเดินออกมาจากขอบจอ</span></div>
+              <div class="button-row password-actions"><button class="button button--ghost" id="hintButton" type="button">ขอคำใบ้</button><button class="button button--primary" type="submit">ตรวจคำตอบ</button></div>
+            </form>
+          </article>
+
+          <article class="question-card" data-panel="3" hidden>
+            <p class="eyebrow">ขอยืนยันอีกที</p>
+            <h2>หื้ยยยยย ใช่ป่าววว</h2>
+            <div class="reaction-frame"><span>คำตอบเดิม:</span><strong id="confirmedMemory">Avatar 3</strong></div>
+            <p class="confirmation-praise" id="confirmationPraise" hidden>เก่งมากค้าบคุณณณณ ไม่คิดว่าจะทายถูกนะเนี่ยยย</p>
+            <div class="button-row">
+              <button class="button button--ghost" type="button" data-back>ขอคิดอีกที</button>
+              <button class="button button--primary" id="confirmAnswerButton" type="button">ยืนยันคำตอบเดิม</button>
+            </div>
+          </article>
+
+          <article class="question-card" data-panel="4" hidden>
+            <p class="eyebrow">เช็กอินความรู้สึก</p>
+            <h2>ตอนนี้คุณรู้สึกยังไงบ้าง</h2>
+            <form class="answer-form" data-answer-key="feeling"><label class="field"><span>คำตอบของคุณ</span><textarea rows="4" placeholder="พิมพ์ได้เต็มที่เลย…"></textarea></label><button class="button button--primary" type="submit">ไปต่อ</button></form>
+          </article>
+
+          <article class="question-card" data-panel="5" hidden>
+            <p class="eyebrow">วันนี้เป็นยังไงบ้าง</p>
+            <h2>ทำงานเหนื่อยไหม</h2>
+            <form class="answer-form" data-answer-key="work"><label class="field"><span>เล่าให้ผมฟังได้นะ</span><textarea rows="4" placeholder="ข้อความจริงจะปรับภายหลัง…"></textarea></label><button class="button button--primary" type="submit">ไปต่อ</button></form>
+          </article>
+
+          <article class="question-card flower-card" data-panel="6" hidden>
+            <p class="eyebrow">มินิเกมจัดดอกไม้</p>
+            <h2>เลือกดอกไม้ 3 ดอก</h2>
+            <p class="selection-status" id="flowerStatus">เลือกแล้ว 0/3 ดอก</p>
+            <div class="flower-grid" aria-label="เลือกดอกไม้">
+              <button type="button" data-flower="เดซี่">🌼</button><button type="button" data-flower="ทานตะวัน">🌻</button>
+              <button type="button" data-flower="ไฮยาซินธ์">🪻</button><button type="button" data-flower="ทิวลิป">🌷</button>
+              <button type="button" data-flower="กุหลาบ">🌹</button><button type="button" data-flower="ซากุระ">🌸</button>
+            </div>
+            <div class="bouquet-options" aria-label="ตกแต่งช่อดอกไม้">
+              <div><span>ใบไม้:</span><button type="button" data-leaf="ใบอ่อน">🍃</button><button type="button" data-leaf="ใบเฟิร์น">🌿</button></div>
+              <div><span>ริบบิ้น:</span><button type="button" data-ribbon="ฟ้า">🩵</button><button type="button" data-ribbon="ชมพู">🩷</button></div>
+            </div>
+            <div class="bouquet-preview" id="bouquetPreview" aria-live="polite">💐</div>
+            <button class="button button--primary" id="createBouquetButton" type="button" disabled>จัดช่อดอกไม้</button>
+          </article>
+
+          <article class="question-card" data-panel="7" hidden>
+            <p class="eyebrow">พื้นที่ของคุณ</p>
+            <h2>มีอะไรกลุ้มใจหรืออยากบอกผมไหม</h2>
+            <form class="answer-form" data-answer-key="message"><label class="field"><span>ข้อความถึงผม</span><textarea rows="5" placeholder="พิมพ์สิ่งที่อยากบอก…"></textarea></label><p class="privacy-note">ⓘ ข้อความที่กดส่งจะถูกส่งให้ผมอ่าน</p><button class="button button--primary" type="submit">ส่งข้อความ</button></form>
+          </article>
+
+          <article class="question-card end-card" data-panel="8" hidden>
+            <p class="eyebrow">หน้าปิดท้าย</p>
+            <h2>ข้อความอบอุ่นจากผม</h2>
+            <p class="placeholder-copy">รอเขียนข้อความจริงร่วมกัน</p>
+            <div class="music-preview"><span>♫</span><i></i><button type="button" disabled>◼</button></div>
+            <button class="button button--primary" id="returnInstagramButton" type="button">กลับไปคุยกันใน Instagram</button>
+          </article>
+        </section>
+
+        <nav class="preview-nav" aria-label="ความคืบหน้า">
+          <div class="progress-dots" id="progressDots" aria-hidden="true"></div>
+        </nav>
+      </section>
+    </main>
+    <section class="exit-overlay" id="exitOverlay" hidden><div class="exit-card"><div class="exit-penguin" aria-hidden="true">🐧</div><h2>ไม่เป็นไรนะ</h2><p>ตรงนี้ยังเป็นข้อความตัวอย่าง ไว้พร้อมเมื่อไหร่ค่อยกลับมาอ่านก็ได้</p><button class="button button--ghost" id="returnButton" type="button">กลับมาหน้าแรก</button></div></section>
+    <aside class="music-drawer" id="musicDrawer" hidden>
+      <div><strong>Snowy — Toby Fox</strong><small>เล่นผ่าน YouTube</small></div>
+      <div id="youtubePlayer"></div>
+      <button class="drawer-close" id="closeMusicDrawer" type="button" aria-label="ย่อเครื่องเล่น">×</button>
+    </aside>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="backend.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

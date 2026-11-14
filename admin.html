@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0a1838" />
+    <title>คำตอบจากเมืองหิมะ</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="admin.css" />
+  </head>
+  <body class="admin-body">
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div><p class="eyebrow">PRIVATE ADMIN</p><h1>คำตอบจากเมืองหิมะ</h1><p>ข้อมูลหน้านี้จะแสดงเฉพาะบัญชีผู้ดูแลที่ล็อกอินแล้ว</p></div>
+        <button class="button button--ghost" id="logoutButton" type="button" hidden>ออกจากระบบ</button>
+      </header>
+
+      <section class="admin-card" id="setupNotice" hidden>
+        <h2>ยังไม่ได้เชื่อม Supabase</h2>
+        <p>ใส่ Project URL และ Anon Key ใน <code>config.js</code> ก่อนใช้งานหน้าผู้ดูแล</p>
+      </section>
+
+      <section class="admin-card login-card" id="loginPanel">
+        <h2>เข้าสู่หน้าผู้ดูแล</h2>
+        <form id="loginForm">
+          <label class="field"><span>อีเมลผู้ดูแล</span><input id="adminEmail" type="email" autocomplete="username" required /></label>
+          <label class="field"><span>รหัสผ่านเฉพาะ</span><input id="adminPassword" type="password" autocomplete="current-password" required /></label>
+          <p class="field-message" id="loginMessage" aria-live="polite"></p>
+          <button class="button button--primary" type="submit">เข้าสู่ระบบ</button>
+        </form>
+      </section>
+
+      <section id="dashboard" hidden>
+        <div class="dashboard-toolbar"><div><strong id="responseCount">0 รายการ</strong><small id="liveStatus">กำลังเชื่อมต่อ…</small></div><button class="button button--ghost" id="refreshButton" type="button">โหลดใหม่</button></div>
+        <div class="response-list" id="responseList"></div>
+        <p class="empty-state" id="emptyState">ยังไม่มีคำตอบเข้ามา</p>
+      </section>
+    </main>
+    <script src="config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
