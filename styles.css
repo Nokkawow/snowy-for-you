@@ -658,7 +658,24 @@ body.is-viewing .gif-stage { opacity: 0; pointer-events: none; }
 .bouquet-preview { min-height: 104px; padding: 8px; }
 #createBouquetButton { width: 100%; }
 
-/* เฉลยช่อดอกไม้ (หน้า 6) */
+.nowrap { white-space: nowrap; }
+.start-overlay[hidden] { display: none; }
+
+/* ไม่แสดงข้อความบรรยายใต้ GIF */
+#reactionCaption { display: none; }
+
+/* หน้าคั่น: ซ่อนเนื้อหาเดิมของการ์ด เหลือแต่ข้อความคั่น + ปุ่ม */
+.question-card.is-interstitial > :not(.interstitial) { display: none; }
+.interstitial[hidden] { display: none; }
+.interstitial { text-align: center; animation: card-pop .45s cubic-bezier(.2, .8, .2, 1) both; }
+.interstitial-message { margin: 6px 0 16px; color: var(--ink); font-size: clamp(1.15rem, 4.6vw, 1.4rem); font-weight: 900; line-height: 1.5; }
+.interstitial-message::before, .interstitial-message::after { content: "❄"; margin-inline: .35em; color: #5d8fd8; font-size: .8em; }
+.interstitial-next { width: 100%; }
+.understand-row { grid-template-columns: 1fr 1fr; }
+.interstitial.is-shaking { animation: card-shake .45s ease; }
+@keyframes card-shake { 20% { transform: translateX(-8px); } 40% { transform: translateX(8px); } 60% { transform: translateX(-5px); } 80% { transform: translateX(4px); } }
+
+/* เฉลยช่อดอกไม้ (หน้า 5) */
 .bouquet-builder[hidden], .bouquet-reveal[hidden] { display: none; }
 .bouquet-reveal { text-align: center; animation: card-pop .5s cubic-bezier(.2, .8, .2, 1) both; }
 .reveal-message { margin: 4px 0 12px; color: #c4456b; font-size: 1.12rem; font-weight: 900; }

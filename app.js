@@ -1,4 +1,4 @@
-const totalSteps = 8;
+const totalSteps = 7;
 let currentStep = 1;
 let escapeCount = 0;
 let wrongAttempts = 0;
@@ -109,9 +109,8 @@ $('#returnInstagramButton').addEventListener('click', () => history.length > 1 ?
 function reactionForStep(step) {
   if (step === 1) return ['nervous', 'ผมกำลังลุ้นอยู่นะ'];
   if (step === 2) return wrongAttempts ? [passwordGifs.wrong[Math.min(wrongAttempts, 4) - 1] || 'angry1', 'ยังจำได้ไหมมม'] : ['nervous', 'ลองนึกดูดี ๆ นะ'];
-  if (step === 3) return ['shocked', 'หื้ยยยยย ใช่ป่าววว'];
-  if (step === 6) return ['gifs/flowers.gif', 'ผมอ่านอยู่นะ'];
-  if (step === 8) return ['happy', 'ขอบคุณที่อ่านจนจบนะ'];
+  if (step === 5) return ['gifs/flowers.gif', 'ผมอ่านอยู่นะ'];
+  if (step === 7) return ['happy', 'ขอบคุณที่อ่านจนจบนะ'];
   return ['happy', 'ผมอ่านอยู่นะ'];
 }
 
@@ -241,10 +240,11 @@ $('#passwordForm').addEventListener('submit', async (event) => {
   const value = input.value.trim();
   if (isAvatarAnswer(value)) {
     draft.memory = value;
-    $('#confirmedMemory').textContent = value;
     $('#passwordMessage').textContent = '';
     await window.snowyBackend.saveAnswer({ page: 2, key: 'memory', value }).catch(() => showToast('เก็บไว้ในเครื่องแล้ว จะลองส่งใหม่อีกครั้ง'));
-    goToStep(3);
+    // หน้าคั่นชมว่าจำได้ + GIF ตอบถูก แล้วให้กด "ไปต่อ" เอง
+    showInterstitial('memoryPraise');
+    setReactionUrl(passwordGifs.correct, 'happy', '');
     return;
   }
   wrongAttempts += 1;
@@ -266,11 +266,23 @@ $('#hintButton').addEventListener('click', () => {
   setReaction('angry1', 'ต้องให้ใบ้ด้วยเหรอเนี่ยยย');
 });
 
-$('#confirmAnswerButton').addEventListener('click', (event) => {
-  $('#confirmationPraise').hidden = false;
-  event.currentTarget.disabled = true;
-  setReactionUrl(passwordGifs.correct, 'happy', 'เก่งมากค้าบคุณณณณ');
-  window.setTimeout(() => goToStep(4), 1600);
+// หน้าคั่น: ซ่อนเนื้อหาเดิมของการ์ด แล้วโชว์กล่อง .interstitial ที่ระบุ
+function showInterstitial(id) {
+  const box = $(`#${id}`);
+  box.closest('.question-card').classList.add('is-interstitial');
+  box.hidden = false;
+}
+
+// หน้าคั่นเรื่องงาน: กด "ไม่เข้าใจ" → GIF โกรธขึ้นเรื่อย ๆ (ใช้ชุดเดียวกับตอบรหัสผิด)
+let notUnderstandCount = 0;
+$('#notUnderstandButton').addEventListener('click', () => {
+  notUnderstandCount += 1;
+  const index = Math.min(notUnderstandCount, 4) - 1;
+  setReactionUrl(passwordGifs.wrong[index], fallbackWrongGifs[index], '');
+  const card = $('#workCare');
+  card.classList.remove('is-shaking');
+  void card.offsetWidth;
+  card.classList.add('is-shaking');
 });
 
 for (const form of $$('.answer-form')) {
@@ -307,7 +319,11 @@ for (const form of $$('.answer-form')) {
       return;
     }
     if (form.dataset.answerKey === 'message') {
-      await window.snowyBackend.saveAnswer({ page: 8, key: 'completed', type: 'complete', payload: { completed: true } }).catch(() => {});
+      await window.snowyBackend.saveAnswer({ page: 7, key: 'completed', type: 'complete', payload: { completed: true } }).catch(() => {});
+    }
+    if (form.dataset.after) {
+      showInterstitial(form.dataset.after); // เช่น หน้าคั่นเรื่องงาน
+      return;
     }
     goToStep(currentStep + 1);
   });
@@ -356,7 +372,7 @@ $('#createBouquetButton').addEventListener('click', async () => {
   $('#bouquetPreview').classList.add('is-done'); // เด้งฉลองตอนจัดช่อเสร็จ
   $('#createBouquetButton').disabled = true;
   localStorage.setItem('snowy-love-draft', JSON.stringify(draft));
-  await window.snowyBackend.saveAnswer({ page: 6, key: 'bouquet', type: 'bouquet', payload: { flowers: draft.flowers, leaf: draft.leaf, ribbon: draft.ribbon } }).catch(() => showToast('เก็บช่อไว้ในเครื่องแล้ว จะลองส่งใหม่อีกครั้ง'));
+  await window.snowyBackend.saveAnswer({ page: 5, key: 'bouquet', type: 'bouquet', payload: { flowers: draft.flowers, leaf: draft.leaf, ribbon: draft.ribbon } }).catch(() => showToast('เก็บช่อไว้ในเครื่องแล้ว จะลองส่งใหม่อีกครั้ง'));
   showToast('จัดช่อเสร็จแล้ว!');
   // เฉลย: โชว์ช่อของเขาคู่กับช่อกุหลาบ 10 ดอกที่ผมจัดให้ แล้วให้เขากด "ไปต่อ" เองเมื่อดูพอแล้ว
   window.setTimeout(() => {
