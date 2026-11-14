@@ -641,6 +641,20 @@ body.is-viewing .gif-stage { opacity: 0; pointer-events: none; }
 .bouquet-options [data-ribbon] .pixel-svg { aspect-ratio: 9 / 7; }
 .bouquet-preview { min-height: 104px; padding: 8px; }
 #createBouquetButton { width: 100%; }
+
+/* เฉลยช่อดอกไม้ (หน้า 6) */
+.bouquet-builder[hidden], .bouquet-reveal[hidden] { display: none; }
+.bouquet-reveal { text-align: center; animation: card-pop .5s cubic-bezier(.2, .8, .2, 1) both; }
+.reveal-message { margin: 4px 0 12px; color: #c4456b; font-size: 1.12rem; font-weight: 900; }
+.reveal-pair { display: grid; grid-template-columns: 1fr 1.35fr; align-items: end; gap: 10px; margin-bottom: 14px; }
+.reveal-pair figure { margin: 0; padding: 8px 6px 6px; border-radius: 14px; background: #fff9ef; }
+.reveal-pair figure.is-mine { background: #ffe9f0; }
+.reveal-art .pixel-svg { width: 100%; height: auto; }
+.reveal-pair figure:first-child .pixel-svg { aspect-ratio: 27 / 26; }
+.reveal-pair figure.is-mine .pixel-svg { aspect-ratio: 30 / 35; animation: rose-in .9s steps(6) .25s both; }
+.reveal-pair figcaption { margin-top: 4px; color: #5872a0; font-size: .8rem; font-weight: 800; }
+.reveal-next { width: 100%; }
+@keyframes rose-in { from { opacity: 0; transform: translateY(14px) scale(.85); } 60% { opacity: 1; transform: translateY(-4px) scale(1.06); } to { opacity: 1; transform: none; } }
 .bouquet-preview .pixel-svg { width: auto; height: 96px; aspect-ratio: 27 / 26; margin: auto; }
 .bouquet-preview.is-done .pixel-svg { animation: bouquet-done .9s steps(6); }
 @keyframes pixel-pop { 50% { transform: translateY(-4px) scale(1.12); } }

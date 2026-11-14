@@ -113,7 +113,8 @@
 
           <article class="question-card flower-card" data-panel="6" hidden>
             <p class="eyebrow">มินิเกมจัดดอกไม้</p>
-            <h2>เลือกดอกไม้ 3 ดอก</h2>
+            <h2>มาเล่นจัดดอกไม้กันมั้ย</h2>
+            <div class="bouquet-builder" id="bouquetBuilder">
             <p class="selection-status" id="flowerStatus">เลือกแล้ว 0/3 ดอก</p>
             <div class="flower-grid" aria-label="เลือกดอกไม้">
               <button type="button" data-flower="เดซี่">🌼</button><button type="button" data-flower="ทานตะวัน">🌻</button>
@@ -125,7 +126,17 @@
               <div><span>ริบบิ้น:</span><button type="button" data-ribbon="ฟ้า">🩵</button><button type="button" data-ribbon="ชมพู">🩷</button></div>
             </div>
             <div class="bouquet-preview" id="bouquetPreview" aria-live="polite">💐</div>
-            <button class="button button--primary" id="createBouquetButton" type="button" disabled>จัดช่อดอกไม้</button>
+            <button class="button button--primary" id="createBouquetButton" type="button" disabled>ส่งช่อดอกไม้</button>
+            </div>
+            <!-- เฉลยหลังกดส่ง: ช่อของเขา + ช่อกุหลาบ 10 ดอกที่ผมจัดให้ -->
+            <div class="bouquet-reveal" id="bouquetReveal" hidden>
+              <p class="reveal-message">นี่ผมจัดดอกไม้ให้คุณด้วย สวยป่าวววว</p>
+              <div class="reveal-pair">
+                <figure><div class="reveal-art" id="yourBouquet"></div><figcaption>ช่อของคุณ</figcaption></figure>
+                <figure class="is-mine"><div class="reveal-art" id="myBouquet"></div><figcaption>ช่อของผม</figcaption></figure>
+              </div>
+              <button class="button button--primary reveal-next" type="button" data-next>ไปต่อ</button>
+            </div>
           </article>
 
           <article class="question-card" data-panel="7" hidden>

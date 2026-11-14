@@ -126,7 +126,42 @@
     return svg(27, 26, body, `ช่อดอกไม้ ${flowers.join(' ')}`);
   }
 
-  window.SnowyPixel = { penguin, flower, leaf, ribbon, bouquet };
+  // ช่อกุหลาบใหญ่ 10 ดอกที่ "ผม" จัดให้: แถวหลัง 3 / กลาง 4 / หน้า 3 + ใบเฟิร์น + ดอกยิปโซ + โบว์
+  function roseBouquet(ribbonName = 'ชมพู') {
+    const W = 30;
+    const roseHead = HEADS.rose.map((r) => r.slice(1, 8)); // ตัดขอบว่างซ้ายขวา เหลือกว้าง 7
+    const roseColors = [
+      { p: '#e8434f', q: '#a8222f' },
+      { p: '#f0596a', q: '#b52a3b' },
+    ];
+    const fern = LEAVES['ใบเฟิร์น'];
+    let body = '';
+    // ใบเฟิร์นด้านหลังซ้าย-ขวา-กลาง
+    body += rects(fern, GREEN, 0, 3) + rects(fern, GREEN, 21, 3) + rects(fern, GREEN, 10, -1);
+    // กุหลาบ 10 ดอก วาดจากแถวหลังมาแถวหน้า
+    const spots = [
+      [4, 0], [11, -1], [18, 0],                 // แถวหลัง 3
+      [1, 4], [8, 4], [15, 4], [22, 4],          // แถวกลาง 4
+      [4, 8], [11, 9], [18, 8],                  // แถวหน้า 3
+    ];
+    spots.forEach(([x, y], i) => { body += rects(roseHead, { ...GREEN, ...roseColors[i % 2] }, x, y + 1); });
+    // ดอกยิปโซ (จุดขาวเล็ก ๆ) แทรกระหว่างดอก
+    [[3, 3], [10, 3], [18, 3], [26, 3], [7, 8], [22, 8], [15, 8], [1, 10], [28, 10]].forEach(([x, y]) => {
+      body += `<rect x="${x}" y="${y + 1}" width="1" height="1" fill="#ffffff"/>`;
+    });
+    // กระดาษห่อทรงกรวยใหญ่
+    for (let row = 0; row < 20; row += 1) {
+      const half = Math.max(3, 14 - Math.floor(row * 0.6));
+      const left = 15 - half;
+      body += `<rect x="${left}" y="${15 + row}" width="${half * 2}" height="1" fill="${PALETTES.wrap.w}"/>`;
+      body += `<rect x="${left}" y="${15 + row}" width="1" height="1" fill="${PALETTES.wrap.W}"/>`;
+      body += `<rect x="${left + half * 2 - 1}" y="${15 + row}" width="1" height="1" fill="${PALETTES.wrap.W}"/>`;
+    }
+    body += rects(BOW, ribbonName === 'ฟ้า' ? PALETTES.ribbonBlue : PALETTES.ribbonPink, 10, 19);
+    return svg(W, 35, body, 'ช่อกุหลาบ 10 ดอกผูกโบว์');
+  }
+
+  window.SnowyPixel = { penguin, flower, leaf, ribbon, bouquet, roseBouquet };
 
   // ---------- ใส่ภาพลงหน้าเว็บ ----------
   // เพนกวินพิกเซลยังเรียกใช้ได้ผ่าน SnowyPixel.penguin() แต่ตอนนี้เว็บใช้ GIF ด้านบนแทน

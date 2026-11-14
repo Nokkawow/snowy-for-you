@@ -110,6 +110,7 @@ function reactionForStep(step) {
   if (step === 1) return ['nervous', 'ผมกำลังลุ้นอยู่นะ'];
   if (step === 2) return wrongAttempts ? [passwordGifs.wrong[Math.min(wrongAttempts, 4) - 1] || 'angry1', 'ยังจำได้ไหมมม'] : ['nervous', 'ลองนึกดูดี ๆ นะ'];
   if (step === 3) return ['shocked', 'หื้ยยยยย ใช่ป่าววว'];
+  if (step === 6) return ['gifs/flowers.gif', 'ผมอ่านอยู่นะ'];
   if (step === 8) return ['happy', 'ขอบคุณที่อ่านจนจบนะ'];
   return ['happy', 'ผมอ่านอยู่นะ'];
 }
@@ -357,7 +358,14 @@ $('#createBouquetButton').addEventListener('click', async () => {
   localStorage.setItem('snowy-love-draft', JSON.stringify(draft));
   await window.snowyBackend.saveAnswer({ page: 6, key: 'bouquet', type: 'bouquet', payload: { flowers: draft.flowers, leaf: draft.leaf, ribbon: draft.ribbon } }).catch(() => showToast('เก็บช่อไว้ในเครื่องแล้ว จะลองส่งใหม่อีกครั้ง'));
   showToast('จัดช่อเสร็จแล้ว!');
-  window.setTimeout(() => goToStep(7), 1200);
+  // เฉลย: โชว์ช่อของเขาคู่กับช่อกุหลาบ 10 ดอกที่ผมจัดให้ แล้วให้เขากด "ไปต่อ" เองเมื่อดูพอแล้ว
+  window.setTimeout(() => {
+    $('#yourBouquet').innerHTML = window.SnowyPixel.bouquet(draft.flowers, draft.leaf, draft.ribbon);
+    $('#myBouquet').innerHTML = window.SnowyPixel.roseBouquet('ชมพู');
+    $('#bouquetBuilder').hidden = true;
+    $('#bouquetReveal').hidden = false;
+    $('#bouquetReveal').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 900);
 });
 
 document.addEventListener('click', (event) => {
