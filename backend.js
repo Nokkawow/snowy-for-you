@@ -20,16 +20,36 @@
     localStorage.setItem(pendingKey, JSON.stringify(pending));
   }
 
+  const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // ส่ง 1 รายการ ถ้าเน็ตสะดุดจะลองใหม่เองอีก 2 ครั้ง (รอ 0.8 และ 2 วินาที)
+  async function insertWithRetry(event) {
+    let lastError = null;
+    for (const delay of [0, 800, 2000]) {
+      if (delay) await wait(delay);
+      try {
+        const { error } = await client.from('love_response_events').insert(event);
+        if (!error || error.code === '23505') return null; // 23505 = เคยส่งแล้ว ถือว่าสำเร็จ
+        lastError = error;
+        if (error.code && /^(23|42)/.test(error.code)) break; // ข้อมูลผิดกติกา ลองซ้ำก็ไม่ผ่าน
+      } catch (networkError) {
+        lastError = networkError;
+      }
+    }
+    return lastError;
+  }
+
   async function send(event) {
     if (!client) {
       queue(event);
       return { queued: true };
     }
-    const { error } = await client.from('love_response_events').insert(event);
-    if (error && error.code !== '23505') {
-      queue(event);
+    const error = await insertWithRetry(event);
+    if (error) {
+      queue(event); // เก็บไว้ในเครื่อง แล้วส่งตามให้ทีหลังด้วย flush()
       throw error;
     }
+    flush().catch(() => {}); // ส่งของที่ค้างจากรอบก่อน (ถ้ามี)
     return { queued: false };
   }
 
@@ -60,4 +80,7 @@
 
   window.snowyBackend = { client, configured, sessionId, saveAnswer, flush };
   flush().catch(() => {});
+  // เน็ตกลับมา / กลับเข้าแอป → ส่งของที่ค้างอยู่
+  window.addEventListener('online', () => flush().catch(() => {}));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) flush().catch(() => {}); });
 })();

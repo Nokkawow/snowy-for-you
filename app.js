@@ -316,6 +316,7 @@ for (const form of $$('.answer-form')) {
     event.preventDefault();
     const submitButton = form.querySelector('[type="submit"]');
     if (submitButton.disabled) return;
+    submitButton.dataset.label ??= submitButton.textContent;
     const field = form.querySelector('textarea');
     const value = field.value.trim();
     if (!value) {
@@ -332,13 +333,22 @@ for (const form of $$('.answer-form')) {
     }
     submitButton.disabled = true;
     let result;
+    submitButton.textContent = 'กำลังส่ง…';
     try {
       result = await window.snowyBackend.saveAnswer({ page, key: form.dataset.answerKey, value });
     } catch {
-      showToast('ส่งไม่สำเร็จ เก็บไว้ในเครื่องแล้ว กรุณาลองใหม่');
-      submitButton.disabled = false;
-      return;
+      submitButton.textContent = submitButton.dataset.label;
+      if (form.dataset.answerKey === 'message') {
+        // ข้อความสุดท้ายสำคัญที่สุด: ให้กดส่งอีกครั้งจนกว่าจะถึงจริง
+        showToast('ส่งยังไม่ถึง ลองกดส่งอีกทีนะ');
+        submitButton.disabled = false;
+        return;
+      }
+      // คำตอบอื่น: เก็บไว้ในเครื่องแล้ว ระบบจะส่งตามให้เอง ไปต่อได้เลย ไม่ต้องค้าง
+      showToast('เน็ตสะดุดนิดนึง เดี๋ยวส่งตามให้เองนะ');
+      result = { queued: true };
     }
+    submitButton.textContent = submitButton.dataset.label;
     if (form.dataset.answerKey === 'message' && result.queued) {
       showToast('ยังส่งไม่ได้ กรุณาตรวจอินเทอร์เน็ตแล้วลองใหม่');
       submitButton.disabled = false;
