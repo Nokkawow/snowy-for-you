@@ -130,6 +130,9 @@ function levenshtein(a, b) {
 function isAvatarAnswer(value) {
   const normalized = normalizeAnswer(value);
   if (!normalized) return false;
+  const numbers = normalized.match(/[0-9๐-๙]+/g) ?? [];
+  if (numbers.some((number) => number !== '3' && number !== '๓')) return false;
+  if (/ภาค(?:หนึ่ง|สอง|สี่|ห้า)/.test(normalized)) return false;
   const accepted = ['avatar', 'avatar3', 'อวตาร', 'อวตาร3', 'อวาตาร', 'อวาตาร3', 'อวาร์ตาน', 'อวตาน', 'อวตารอัคนีและธุลีดิน'];
   return accepted.some((answer) => normalized.includes(answer) || levenshtein(normalized, answer) <= 2);
 }
