@@ -516,8 +516,33 @@ body[data-step="8"] .penguin--pink { right: 33%; transform: rotate(4deg); }
 @media (min-width: 720px) {
   .snowfield { background-size: auto 100%; background-color: #0c1e48; }
 }
+
+/*
+ * ภาพพื้นหลังขยับนิด ๆ: ย้ายภาพไปไว้บน ::before แล้วค่อย ๆ ซูม+เลื่อนไปมาช้า ๆ (รอบละ 24 วินาที)
+ * ใช้ transform จึงลื่นบนมือถือ และขยายภาพเผื่อขอบไว้ 6% จะได้ไม่เห็นขอบว่าง
+ */
+.snowfield { background: #0c1e48; }
+.snowfield::before {
+  content: '';
+  position: absolute;
+  inset: -3%;
+  background: url('snowy-town.png') center bottom / cover no-repeat;
+  transform-origin: 50% 80%;
+  animation: scene-drift 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes scene-drift {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.035) translate(-1.2%, -0.6%); }
+  100% { transform: scale(1.02) translate(1.2%, -0.3%); }
+}
+@media (min-width: 720px) {
+  .snowfield::before { background-size: auto 100%; }
+}
+/* ให้ขยับแม้เครื่องจะตั้ง "ลดการเคลื่อนไหว" ไว้ (เจ้าของเว็บต้องการ) — ขยับช้ามากอยู่แล้ว */
 @media (prefers-reduced-motion: reduce) {
-  .snowfield::after { animation: none; }
+  .snowfield::before { animation: scene-drift 24s ease-in-out infinite alternate !important; }
+  .snowfield::after { animation: lamp-glow 5s ease-in-out infinite alternate !important; }
 }
 
 /* การ์ดเตี้ยลง + โปร่งขึ้น ให้เห็นเมืองหิมะด้านหลัง (ทางเลือก 2) */
