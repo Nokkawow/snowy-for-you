@@ -195,7 +195,7 @@ function walkNotReadyAway() {
     notReadyButton.classList.add('is-returning');
     notReadyButton.removeAttribute('aria-hidden');
     notReadyButton.tabIndex = 0;
-    window.setTimeout(() => notReadyButton.classList.remove('is-running', 'is-returning'), 1600);
+    window.setTimeout(() => notReadyButton.classList.remove('is-running', 'is-returning'), 2100);
   }, NOT_READY_RETURN_MS);
 }
 

@@ -418,24 +418,40 @@ body[data-step="8"] .penguin--pink { right: 33%; transform: rotate(4deg); }
   transition: min-height .25s ease, font-size .25s ease;
 }
 .choice-zone .button--primary:active { transform: translateY(4px); }
-/* ครั้งที่ 4: ปุ่มเดินออกนอกจอทางขวา (ขยับเป็นจังหวะเหมือนก้าวเดิน) */
-.runaway-button.is-walking-away { animation: walk-away 1.4s steps(9) forwards; pointer-events: none; }
-.runaway-button.is-returning { animation: walk-back 1.5s steps(10) both; }
+/*
+ * ครั้งที่ 4: ปุ่มเดินออกข้างจอทางขวาแบบลื่น ๆ
+ * - walk-away = เลื่อนไปทางขวาเรื่อย ๆ (linear)
+ * - waddle    = ส่ายตัวซ้ายขวาเหมือนก้าวเดิน (ใช้ property rotate แยก จึงไม่ชนกับการเลื่อน)
+ * - ขาสลับ ╱╲ ↔ ╲╱ ระหว่างเดิน
+ */
+.runaway-button.is-walking-away {
+  animation: walk-away 2.4s linear forwards, waddle .32s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.runaway-button.is-returning { animation: walk-back 2s ease-out both, waddle .32s ease-in-out 6 alternate; }
 @keyframes walk-away {
-  0% { transform: translate(var(--run-x, 0), var(--run-y, 0)) scale(var(--run-scale, 1)) rotate(0deg); }
-  15% { transform: translate(calc(var(--run-x, 0px) - 14px), var(--run-y, 0)) scale(var(--run-scale, 1)) rotate(-6deg); }
-  50% { transform: translate(45vw, calc(var(--run-y, 0px) - 4px)) scale(var(--run-scale, 1)) rotate(5deg); }
-  100% { transform: translate(130vw, var(--run-y, 0)) scale(var(--run-scale, 1)) rotate(-5deg); visibility: hidden; }
+  0% { transform: translate(var(--run-x, 0px), var(--run-y, 0px)) scale(var(--run-scale, 1)); }
+  12% { transform: translate(calc(var(--run-x, 0px) - 12px), var(--run-y, 0px)) scale(var(--run-scale, 1)); } /* ถอยตั้งท่านิดนึง */
+  99% { transform: translate(130vw, var(--run-y, 0px)) scale(var(--run-scale, 1)); visibility: visible; }
+  100% { transform: translate(130vw, var(--run-y, 0px)) scale(var(--run-scale, 1)); visibility: hidden; }
 }
 @keyframes walk-back {
-  0% { transform: translateX(-130vw) rotate(5deg); }
-  60% { transform: translateX(-20vw) rotate(-5deg); }
-  85% { transform: translateX(6px) rotate(3deg); }
+  0% { transform: translateX(-130vw); }
+  85% { transform: translateX(6px); }
   100% { transform: none; }
 }
+@keyframes waddle { from { rotate: -7deg; } to { rotate: 7deg; } }
 .app-shell { overflow-x: clip; }
-.button-legs { position: absolute; left: 50%; bottom: -12px; transform: translateX(-50%); opacity: 0; letter-spacing: 8px; font-size: .82rem; color: var(--cream); transition: opacity .15s ease; }
+.button-legs { position: absolute; left: 50%; bottom: -13px; transform: translateX(-50%); opacity: 0; letter-spacing: 8px; font-size: .9rem; font-weight: 900; color: #111; transition: opacity .15s ease; }
 .runaway-button.is-running .button-legs { opacity: 1; }
+.runaway-button.is-walking-away .button-legs,
+.runaway-button.is-returning .button-legs { animation: legs-step .32s steps(1) infinite; }
+@keyframes legs-step { 50% { transform: translateX(-50%) scaleX(-1); } }
+/* โหมดลดการเคลื่อนไหว: ยังเดินออกจอให้เห็น (ไม่วาปหาย) แต่ไม่ส่ายตัว */
+@media (prefers-reduced-motion: reduce) {
+  .runaway-button.is-walking-away { animation: walk-away 2.4s linear 1 forwards !important; }
+  .runaway-button.is-returning { animation: walk-back 2s ease-out 1 both !important; }
+}
 .hint-runner { display: flex; align-items: center; justify-content: center; gap: 8px; overflow: hidden; }
 .hint-runner[hidden] { display: none; }
 .hint-runner.is-entering .hint-penguin { animation: hint-walk .75s steps(5) both; }
