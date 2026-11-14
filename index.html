@@ -11,7 +11,7 @@
     />
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body data-step="1">
+  <body data-step="1" class="is-starting">
     <section class="start-overlay" id="startOverlay">
       <div class="start-card">
         <span class="start-snow" aria-hidden="true">❄</span>
@@ -35,7 +35,7 @@
         <div class="lamp"><span></span></div>
         <div class="snowbank snowbank--back"></div>
         <div class="snowbank snowbank--front"></div>
-        <div class="snowflakes"></div>
+        <canvas class="snow-canvas" id="snowCanvas"></canvas>
       </div>
 
       <section class="phone-stage">
@@ -44,6 +44,7 @@
             <span id="stepNumber">1</span><small>/8</small>
           </div>
           <p class="preview-label">เมืองหิมะของเรา</p>
+          <button class="icon-button view-button" id="viewSceneButton" type="button" aria-pressed="false">ดูวิว</button>
           <button class="icon-button" id="musicButton" type="button" aria-label="เปิดตัวควบคุมเพลง">
             ♫
           </button>
@@ -152,7 +153,10 @@
       <div id="youtubePlayer"></div>
       <button class="drawer-close" id="closeMusicDrawer" type="button" aria-label="ย่อเครื่องเล่น">×</button>
     </aside>
+    <button class="view-return" id="viewReturnButton" type="button" hidden>กลับมาอ่านต่อ</button>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="snow.js"></script>
+    <script src="pixel-art.js"></script>
     <script src="config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="backend.js"></script>

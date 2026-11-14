@@ -58,12 +58,23 @@ $('#startExperienceButton').addEventListener('click', () => {
   shouldStartMusic = true;
   createMusicPlayer();
   $('#startOverlay').classList.add('is-leaving');
+  document.body.classList.remove('is-starting');
   window.setTimeout(() => { $('#startOverlay').hidden = true; }, 600);
 });
 
 $('#musicButton').addEventListener('click', () => { $('#musicDrawer').hidden = !$('#musicDrawer').hidden; });
 $('#endMusicButton').addEventListener('click', () => { $('#musicDrawer').hidden = false; });
 $('#closeMusicDrawer').addEventListener('click', () => { $('#musicDrawer').hidden = true; });
+// ปุ่ม "ดูวิว": ซ่อนการ์ดชั่วคราว แล้วแตะ "กลับมาอ่านต่อ" (หรือปุ่มเดิม) เพื่อเอาการ์ดกลับมา
+function setViewingScene(isViewing) {
+  document.body.classList.toggle('is-viewing', isViewing);
+  $('#viewSceneButton').setAttribute('aria-pressed', String(isViewing));
+  $('#viewSceneButton').textContent = isViewing ? 'กลับ' : 'ดูวิว';
+  $('#viewReturnButton').hidden = !isViewing;
+}
+$('#viewSceneButton').addEventListener('click', () => setViewingScene(!document.body.classList.contains('is-viewing')));
+$('#viewReturnButton').addEventListener('click', () => setViewingScene(false));
+
 $('#returnInstagramButton').addEventListener('click', () => history.length > 1 ? history.back() : window.close());
 
 function reactionForStep(step) {
@@ -81,6 +92,12 @@ function renderStep() {
   for (const dot of progressDots.children) dot.classList.toggle('is-current', Number(dot.dataset.dot) === currentStep);
   setReaction(...reactionForStep(currentStep));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+  // ทรานซิชันตอนเปลี่ยนหน้า: เพนกวินกระโดด + GIF ค่อย ๆ เปลี่ยน (ดู .is-stepping ใน styles.css)
+  document.body.classList.remove('is-stepping');
+  void document.body.offsetWidth;
+  document.body.classList.add('is-stepping');
+  window.clearTimeout(renderStep.timer);
+  renderStep.timer = window.setTimeout(() => document.body.classList.remove('is-stepping'), 700);
 }
 
 function goToStep(step) {
@@ -88,25 +105,76 @@ function goToStep(step) {
   renderStep();
 }
 
-function moveNotReadyButton() {
-  if (escapeCount >= 2) return false;
-  const positions = [{ x: '18px', y: '5px' }, { x: '-18px', y: '4px' }];
-  const button = $('#notReadyButton');
-  const position = positions[escapeCount];
+/*
+ * ปุ่ม "วันนี้ยังไม่พร้อม" แบบกวน ๆ
+ * - แตะ/เอาเมาส์ไปใกล้ ครั้งที่ 1–3: ปุ่มกระโดดหนี + หดลง (ทั้งปุ่มและตัวอักษร) ส่วน "อ่านต่อ" ใหญ่ขึ้น
+ * - ครั้งที่ 4: ปุ่มเดินออกนอกจอ แล้วเดินกลับมาเองหลัง NOT_READY_RETURN_MS ในขนาดปกติ
+ * - หลังกลับมา ปุ่มไม่หนีแล้ว กดได้จริง → ขึ้นหน้า "ไม่เป็นไรนะ"
+ */
+const NOT_READY_DODGES = 3;            // จำนวนครั้งที่หนี+หด ก่อนเดินออกจอ
+const NOT_READY_RETURN_MS = 8000;      // เดินออกไปนานเท่าไหร่ก่อนกลับมา
+const notReadyButton = $('#notReadyButton');
+const readButton = $('[data-panel="1"] [data-next]');
+let notReadyState = 'dodging';         // dodging → away → back
+let lastDodgeAt = 0;
+
+function setNotReadyScale(count) {
+  notReadyButton.style.setProperty('--run-scale', String(1 - count * 0.18));
+  readButton.style.setProperty('--primary-scale', String(1 + count * 0.07));
+}
+
+function dodgeNotReadyButton() {
+  if (notReadyState !== 'dodging') return false;
+  const now = Date.now();
+  if (now - lastDodgeAt < 350) return true; // กันนับซ้ำตอน hover แล้วคลิกต่อทันที
+  lastDodgeAt = now;
   escapeCount += 1;
-  button.style.setProperty('--run-x', position.x);
-  button.style.setProperty('--run-y', position.y);
-  button.classList.add('is-running');
-  $('[data-panel="1"] [data-next]').style.setProperty('--primary-scale', String(1 + escapeCount * 0.04));
-  window.setTimeout(() => button.classList.remove('is-running'), 520);
+
+  if (escapeCount > NOT_READY_DODGES) {
+    walkNotReadyAway();
+    return true;
+  }
+
+  // สุ่มที่หนีภายในการ์ด สลับซ้ายขวาเพื่อให้เห็นว่าหนีจริง
+  const zoneWidth = notReadyButton.parentElement.clientWidth;
+  const side = escapeCount % 2 ? 1 : -1;
+  const x = side * Math.round(zoneWidth * (0.12 + Math.random() * 0.14));
+  const y = Math.round(4 + Math.random() * 14);
+  notReadyButton.style.setProperty('--run-x', `${x}px`);
+  notReadyButton.style.setProperty('--run-y', `${y}px`);
+  setNotReadyScale(escapeCount);
+  notReadyButton.classList.add('is-running');
+  window.setTimeout(() => notReadyButton.classList.remove('is-running'), 520);
   return true;
 }
 
-$('#notReadyButton').addEventListener('pointerenter', (event) => {
-  if (event.pointerType === 'mouse') moveNotReadyButton();
+function walkNotReadyAway() {
+  notReadyState = 'away';
+  notReadyButton.classList.remove('is-returning');
+  notReadyButton.classList.add('is-running', 'is-walking-away');
+  notReadyButton.setAttribute('aria-hidden', 'true');
+  notReadyButton.tabIndex = -1;
+
+  window.setTimeout(() => {
+    // เดินกลับมาในขนาดปกติ และกดได้จริง
+    notReadyState = 'back';
+    notReadyButton.style.setProperty('--run-x', '0px');
+    notReadyButton.style.setProperty('--run-y', '0px');
+    setNotReadyScale(0);
+    notReadyButton.classList.remove('is-walking-away');
+    notReadyButton.classList.add('is-returning');
+    notReadyButton.removeAttribute('aria-hidden');
+    notReadyButton.tabIndex = 0;
+    window.setTimeout(() => notReadyButton.classList.remove('is-running', 'is-returning'), 1600);
+  }, NOT_READY_RETURN_MS);
+}
+
+notReadyButton.addEventListener('pointerenter', (event) => {
+  if (event.pointerType === 'mouse') dodgeNotReadyButton();
 });
-$('#notReadyButton').addEventListener('click', (event) => {
-  if (moveNotReadyButton()) return event.preventDefault();
+notReadyButton.addEventListener('click', (event) => {
+  if (dodgeNotReadyButton()) return event.preventDefault();
+  if (notReadyState === 'away') return event.preventDefault();
   $('#exitOverlay').hidden = false;
 });
 $('#returnButton').addEventListener('click', () => { $('#exitOverlay').hidden = true; });
@@ -220,6 +288,8 @@ const ribbonButtons = $$('[data-ribbon]');
 
 function updateBouquet() {
   $('#flowerStatus').textContent = `เลือกแล้ว ${draft.flowers.length}/3 ดอก`;
+  // แสดงช่อดอกไม้ตามที่เลือกอยู่ทันที (pixel art จาก pixel-art.js)
+  if (window.SnowyPixel) $('#bouquetPreview').innerHTML = window.SnowyPixel.bouquet(draft.flowers, draft.leaf, draft.ribbon);
   $('#createBouquetButton').disabled = !(draft.flowers.length === 3 && draft.leaf && draft.ribbon);
 }
 
@@ -252,8 +322,7 @@ selectOne(leafButtons, 'leaf');
 selectOne(ribbonButtons, 'ribbon');
 
 $('#createBouquetButton').addEventListener('click', async () => {
-  const flowers = flowerButtons.filter((button) => button.classList.contains('is-selected')).map((button) => button.textContent).join('');
-  $('#bouquetPreview').textContent = `${flowers} ${draft.ribbon === 'ฟ้า' ? '🩵' : '🩷'}`;
+  $('#bouquetPreview').classList.add('is-done'); // เด้งฉลองตอนจัดช่อเสร็จ
   $('#createBouquetButton').disabled = true;
   localStorage.setItem('snowy-love-draft', JSON.stringify(draft));
   await window.snowyBackend.saveAnswer({ page: 6, key: 'bouquet', type: 'bouquet', payload: { flowers: draft.flowers, leaf: draft.leaf, ribbon: draft.ribbon } }).catch(() => showToast('เก็บช่อไว้ในเครื่องแล้ว จะลองส่งใหม่อีกครั้ง'));
